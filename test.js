@@ -368,23 +368,30 @@ function jxh(e) {
 function oneP(e) {
   const t = e.reduce((acc, curr) => {
     // 删除上标数字检测
-    const baseName = curr.name.replace(/[\s⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "");
+    const baseName = curr.name.replace(/ (?:\d{2}|\d{1})$/, ""); // 匹配最后的数字
     if (!acc[baseName]) {
       acc[baseName] = [];
     }
     acc[baseName].push(curr);
     return acc;
   }, {});
-  
-  // 处理只有一个节点的情况
+
+  // 处理只有一个序号的情况
   for (const key in t) {
-    if (t[key].length === 1) {
+    if (t[key].length === 1 && t[key][0].name.endsWith(" 01")) {
+      // 如果只有一个节点且是 "01"，则删除
       t[key][0].name = key;
+    } else if (t[key].length > 1) {
+      // 如果有多个，保留
+      t[key].forEach((item, index) => {
+        item.name = `${item.name}`;
+      });
     }
   }
-  
+
   return e;
 }
+
 
 // prettier-ignore
 function fampx(pro) { 

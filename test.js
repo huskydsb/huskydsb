@@ -367,7 +367,7 @@ function jxh(e) {
 function oneP(e) {
   const t = e.reduce((acc, curr) => {
     // 删除上标数字检测
-    const baseName = curr.name.replace(/ (?:\d{2}|\d{1})$/, ""); // 匹配最后的数字
+    const baseName = curr.name.replace(/ [⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, ""); // 匹配最后的上标数字
     if (!acc[baseName]) {
       acc[baseName] = [];
     }
@@ -375,17 +375,15 @@ function oneP(e) {
     return acc;
   }, {});
 
-  // 处理只有一个序号的情况
+  // 处理只有一个节点的情况
   for (const key in t) {
     if (t[key].length === 1) {
-      // 如果只有一个节点且是 "01"，则删除
-      if (t[key][0].name.endsWith(" 01")) {
-        t[key][0].name = key; // 设置为 baseName
-      }
+      // 如果只有一个节点，则去掉上标数字
+      t[key][0].name = key; // 只保留 baseName
     } else {
-      // 如果有多个节点，保留原来的 name，但不包括数字
+      // 如果有多个节点，保留原来的 name
       t[key].forEach(item => {
-        item.name = item.name.replace(/ \d{2}$/, ""); // 删除最后的数字
+        item.name = item.name.replace(/ [⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, ""); // 删除上标数字
       });
     }
   }

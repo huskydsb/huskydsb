@@ -149,19 +149,17 @@ const rurekey = {
   Esnc: /esnc/gi,
 };
 
-let GetK = false, AMK = [];
-
+let GetK = false, AMK = []
 function ObjKA(i) {
-  GetK = true;
-  AMK = Object.entries(i);
+  GetK = true
+  AMK = Object.entries(i)
 }
 
 function operator(pro) {
   const Allmap = {};
   const outList = getList(outputName);
   let inputList,
-      retainKey = "";
-
+    retainKey = "";
   if (inname !== "") {
     inputList = [getList(inname)];
   } else {
@@ -189,41 +187,38 @@ function operator(pro) {
   const BLKEYS = BLKEY ? BLKEY.split("+") : "";
 
   pro.forEach((e) => {
-    let bktf = false,
-        ens = e.name;
-
+    let bktf = false, ens = e.name
     // 预处理 防止预判或遗漏
     Object.keys(rurekey).forEach((ikey) => {
       if (rurekey[ikey].test(e.name)) {
         e.name = e.name.replace(rurekey[ikey], ikey);
-
-        if (BLKEY) {
-          bktf = true;
-          let BLKEY_REPLACE = "",
-              re = false;
-          BLKEYS.forEach((i) => {
-            if (i.includes(">") && ens.includes(i.split(">")[0])) {
-              if (rurekey[ikey].test(i.split(">")[0])) {
-                e.name += " " + i.split(">")[0];
-              }
-              if (i.split(">")[1]) {
-                BLKEY_REPLACE = i.split(">")[1];
-                re = true;
-              }
-            } else {
-              if (ens.includes(i)) {
-                e.name += " " + i;
-              }
+      if (BLKEY) {
+        bktf = true
+        let BLKEY_REPLACE = "",
+        re = false;
+      BLKEYS.forEach((i) => {
+        if (i.includes(">") && ens.includes(i.split(">")[0])) {
+          if (rurekey[ikey].test(i.split(">")[0])) {
+              e.name += " " + i.split(">")[0]
             }
-          });
-          retainKey = re ? BLKEY_REPLACE : BLKEYS.filter((items) => e.name.includes(items));
+          if (i.split(">")[1]) {
+            BLKEY_REPLACE = i.split(">")[1];
+            re = true;
+          }
+        } else {
+          if (ens.includes(i)) {
+             e.name += " " + i
+            }
         }
+        retainKey = re
+        ? BLKEY_REPLACE
+        : BLKEYS.filter((items) => e.name.includes(items));
+      });}
       }
     });
-
-    if (blockquic === "on") {
+    if (blockquic == "on") {
       e["block-quic"] = "on";
-    } else if (blockquic === "off") {
+    } else if (blockquic == "off") {
       e["block-quic"] = "off";
     } else {
       delete e["block-quic"];
@@ -232,7 +227,7 @@ function operator(pro) {
     // 自定义
     if (!bktf && BLKEY) {
       let BLKEY_REPLACE = "",
-          re = false;
+        re = false;
       BLKEYS.forEach((i) => {
         if (i.includes(">") && e.name.includes(i.split(">")[0])) {
           if (i.split(">")[1]) {
@@ -241,12 +236,13 @@ function operator(pro) {
           }
         }
       });
-      retainKey = re ? BLKEY_REPLACE : BLKEYS.filter((items) => e.name.includes(items));
+      retainKey = re
+        ? BLKEY_REPLACE
+        : BLKEYS.filter((items) => e.name.includes(items));
     }
 
     let ikey = "",
-        ikeys = "";
-
+      ikeys = "";
     // 保留固定格式 倍率
     if (blgd) {
       regexArray.forEach((regex, index) => {
@@ -258,7 +254,9 @@ function operator(pro) {
 
     // 正则 匹配倍率
     if (bl) {
-      const match = e.name.match(/((倍率|X|x|×)\D?((\d{1,3}\.)?\d+)\D?)|((\d{1,3}\.)?\d+)(倍|X|x|×)/);
+      const match = e.name.match(
+        /((倍率|X|x|×)\D?((\d{1,3}\.)?\d+)\D?)|((\d{1,3}\.)?\d+)(倍|X|x|×)/
+      );
       if (match) {
         const rev = match[0].match(/(\d[\d.]*)/)[0];
         if (rev !== "1") {
@@ -268,25 +266,24 @@ function operator(pro) {
       }
     }
 
-    !GetK && ObjKA(Allmap);
-
+    !GetK && ObjKA(Allmap)
     // 匹配 Allkey 地区
-    const findKey = AMK.find(([key]) => e.name.includes(key));
-
+    const findKey = AMK.find(([key]) =>
+      e.name.includes(key)
+    )
+    
     let firstName = "",
-        nNames = "";
+      nNames = "";
 
     if (nf) {
       firstName = FNAME;
     } else {
       nNames = FNAME;
     }
-
     if (findKey?.[1]) {
       const findKeyValue = findKey[1];
       let keyover = [],
-          usflag = "";
-
+        usflag = "";
       if (addflag) {
         const index = outList.indexOf(findKeyValue);
         if (index !== -1) {
@@ -294,56 +291,28 @@ function operator(pro) {
           usflag = usflag === "🇹🇼" ? "🇹🇼" : usflag;
         }
       }
-
       keyover = keyover
         .concat(firstName, usflag, findKeyValue, retainKey, ikey, ikeys)
         .filter((k) => k !== "");
       e.name = keyover.join(FGF);
     } else {
       if (nm) {
-        e.name = e.name;
+        e.name =  e.name;
       } else {
         e.name = null;
       }
     }
   });
-
   pro = pro.filter((e) => e.name !== null);
   jxh(pro);
   numone && oneP(pro);
   blpx && (pro = fampx(pro));
   key && (pro = pro.filter((e) => !keyb.test(e.name)));
-
-  // 最后处理相同名字的节点，确保只有一个时删除上角标
-  const nameCount = {};
-  pro.forEach(item => {
-    const baseName = item.name.replace(/ [⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, ""); // 匹配最后的上标数字
-    nameCount[baseName] = (nameCount[baseName] || 0) + 1;
-  });
-
-  pro.forEach(item => {
-    const baseName = item.name.replace(/ [⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, ""); // 匹配最后的上标数字
-    if (nameCount[baseName] === 1) {
-      item.name = baseName; // 只有一个时去掉上角标
-    } else {
-      item.name = item.name.replace(/ [⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, ""); // 多个时删除上角标
-    }
-  });
-
   return pro;
 }
 
 // prettier-ignore
-function getList(arg) { 
-  switch (arg) { 
-    case 'zht': return ZHT;
-    case 'us': return EN; 
-    case 'gq': return FG; 
-    case 'quan': return QC; 
-    default: return ZH; 
-  }
-}
-
+function getList(arg) { switch (arg) { case 'zht': return ZHT;case 'us': return EN; case 'gq': return FG; case 'quan': return QC; default: return ZH; }}
 // prettier-ignore
 function toSuperscript(numStr) {
   const superscriptMap = {
@@ -353,75 +322,51 @@ function toSuperscript(numStr) {
   return numStr.replace(/\d/g, match => superscriptMap[match] || match);
 }
 
-// 更新序号生成的地方以支持上标
+// 更新序號生成的地方以支持上標
 function jxh(e) {
-  const n = e.reduce((acc, curr) => {
-    const t = acc.find((item) => item.name === curr.name);
+  const n = e.reduce((e, n) => {
+    const t = e.find((e) => e.name === n.name);
     if (t) {
       t.count++;
-      // 仅在节点数量大于1时才添加序列号
       t.items.push({
-        ...curr,
-        name: `${curr.name} ${toSuperscript(t.count.toString().padStart(2, "0"))} ${FNAME}`
+        ...n,
+        name: `${n.name} ${toSuperscript(t.count.toString().padStart(2, "0"))} ${FNAME}`
       });
     } else {
-      acc.push({
-        name: curr.name,
+      e.push({
+        name: n.name,
         count: 1,
         items: [{
-          ...curr,
-          name: `${curr.name} ${toSuperscript("01")} ${FNAME}`
+          ...n,
+          name: `${n.name} ${toSuperscript("01")} ${FNAME}`
         }],
       });
     }
-    return acc;
+    return e;
   }, []);
-
   const t = Array.prototype.flatMap ? n.flatMap(e => e.items) : n.reduce((acc, e) => acc.concat(e.items), []);
   e.splice(0, e.length, ...t);
   return e;
 }
 
+// 修改 oneP 函數，使其在節點只有一個時去掉序號
 function oneP(e) {
-  const t = e.reduce((acc, curr) => {
-    // 删除上标数字检测
-    const baseName = curr.name.replace(/ [⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, ""); // 匹配最后的上标数字
-    if (!acc[baseName]) {
-      acc[baseName] = [];
+  const t = e.reduce((e, t) => {
+    // 刪除上標數字檢測
+    const baseName = t.name.replace(/[\s⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "");
+    if (!e[baseName]) {
+      e[baseName] = [];
     }
-    acc[baseName].push(curr);
-    return acc;
+    e[baseName].push(t);
+    return e;
   }, {});
-
-  // 处理只有一个节点的情况
+  // 處理只有一個節點的情況
   for (const key in t) {
     if (t[key].length === 1) {
-      // 如果只有一个节点，去掉上标数字和序列号
-      t[key][0].name = key; // 只保留 baseName
-    } else {
-      // 如果有多个节点，保留原来的 name
-      t[key].forEach(item => {
-        item.name = item.name.replace(/ [⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, ""); // 删除上标数字
-      });
+      t[key][0].name = key;
     }
   }
-
   return e;
 }
-
-function fampx(pro) {
-  const wis = [];
-  const wnout = [];
-  for (const proxy of pro) {
-    const fan = specialRegex.some((regex) => regex.test(proxy.name));
-    if (fan) {
-      wis.push(proxy);
-    } else {
-      wnout.push(proxy);
-    }
-  }
-  const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)));
-  wis.sort((a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name));
-  wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b));
-  return wnout.concat(wis);
-}
+// prettier-ignore
+function fampx(pro) { const wis = []; const wnout = []; for (const proxy of pro) { const fan = specialRegex.some((regex) => regex.test(proxy.name)); if (fan) { wis.push(proxy); } else { wnout.push(proxy); } } const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)) ); wis.sort( (a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name) ); wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); return wnout.concat(wis);}

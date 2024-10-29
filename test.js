@@ -313,6 +313,23 @@ function operator(pro) {
   numone && oneP(pro);
   blpx && (pro = fampx(pro));
   key && (pro = pro.filter((e) => !keyb.test(e.name)));
+
+  // 最后处理相同名字的节点，确保只有一个时删除上角标
+  const nameCount = {};
+  pro.forEach(item => {
+    const baseName = item.name.replace(/ [⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, ""); // 匹配最后的上标数字
+    nameCount[baseName] = (nameCount[baseName] || 0) + 1;
+  });
+
+  pro.forEach(item => {
+    const baseName = item.name.replace(/ [⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, ""); // 匹配最后的上标数字
+    if (nameCount[baseName] === 1) {
+      item.name = baseName; // 只有一个时去掉上角标
+    } else {
+      item.name = item.name.replace(/ [⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, ""); // 多个时删除上角标
+    }
+  });
+
   return pro;
 }
 
@@ -392,21 +409,19 @@ function oneP(e) {
   return e;
 }
 
-// prettier-ignore
-function fampx(pro) { 
-  const wis = []; 
-  const wnout = []; 
-  for (const proxy of pro) { 
-    const fan = specialRegex.some((regex) => regex.test(proxy.name)); 
-    if (fan) { 
-      wis.push(proxy); 
-    } else { 
-      wnout.push(proxy); 
-    } 
-  } 
-  const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name))); 
-  wis.sort((a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name)); 
-  wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); 
+function fampx(pro) {
+  const wis = [];
+  const wnout = [];
+  for (const proxy of pro) {
+    const fan = specialRegex.some((regex) => regex.test(proxy.name));
+    if (fan) {
+      wis.push(proxy);
+    } else {
+      wnout.push(proxy);
+    }
+  }
+  const sps = wis.map((proxy) => specialRegex.findIndex((regex) => regex.test(proxy.name)));
+  wis.sort((a, b) => sps[wis.indexOf(a)] - sps[wis.indexOf(b)] || a.name.localeCompare(b.name));
+  wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b));
   return wnout.concat(wis);
 }
-1

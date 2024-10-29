@@ -336,12 +336,13 @@ function toSuperscript(numStr) {
   return numStr.replace(/\d/g, match => superscriptMap[match] || match);
 }
 
-// 更新序號生成的地方以支持上標
+// 更新序号生成的地方以支持上标
 function jxh(e) {
   const n = e.reduce((acc, curr) => {
     const t = acc.find((item) => item.name === curr.name);
     if (t) {
       t.count++;
+      // 仅在节点数量大于1时才添加序列号
       t.items.push({
         ...curr,
         name: `${curr.name} ${toSuperscript(t.count.toString().padStart(2, "0"))} ${FNAME}`
@@ -358,7 +359,7 @@ function jxh(e) {
     }
     return acc;
   }, []);
-  
+
   const t = Array.prototype.flatMap ? n.flatMap(e => e.items) : n.reduce((acc, e) => acc.concat(e.items), []);
   e.splice(0, e.length, ...t);
   return e;
@@ -378,7 +379,7 @@ function oneP(e) {
   // 处理只有一个节点的情况
   for (const key in t) {
     if (t[key].length === 1) {
-      // 如果只有一个节点，去掉上标数字
+      // 如果只有一个节点，去掉上标数字和序列号
       t[key][0].name = key; // 只保留 baseName
     } else {
       // 如果有多个节点，保留原来的 name
@@ -387,11 +388,6 @@ function oneP(e) {
       });
     }
   }
-
-  // 最后去除所有上标数字（如果需要）
-  e.forEach(item => {
-    item.name = item.name.replace(/ [⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, ""); // 确保不再有上标数字
-  });
 
   return e;
 }

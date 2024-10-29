@@ -161,7 +161,7 @@ function operator(pro) {
   const outList = getList(outputName);
   let inputList,
       retainKey = "";
-  
+
   if (inname !== "") {
     inputList = [getList(inname)];
   } else {
@@ -191,12 +191,12 @@ function operator(pro) {
   pro.forEach((e) => {
     let bktf = false,
         ens = e.name;
-    
+
     // 预处理 防止预判或遗漏
     Object.keys(rurekey).forEach((ikey) => {
       if (rurekey[ikey].test(e.name)) {
         e.name = e.name.replace(rurekey[ikey], ikey);
-        
+
         if (BLKEY) {
           bktf = true;
           let BLKEY_REPLACE = "",
@@ -272,7 +272,7 @@ function operator(pro) {
 
     // 匹配 Allkey 地区
     const findKey = AMK.find(([key]) => e.name.includes(key));
-    
+
     let firstName = "",
         nNames = "";
 
@@ -286,7 +286,7 @@ function operator(pro) {
       const findKeyValue = findKey[1];
       let keyover = [],
           usflag = "";
-      
+
       if (addflag) {
         const index = outList.indexOf(findKeyValue);
         if (index !== -1) {
@@ -392,9 +392,6 @@ function oneP(e) {
   return e;
 }
 
-
-
-
 // prettier-ignore
 function fampx(pro) { 
   const wis = []; 
@@ -412,3 +409,4 @@ function fampx(pro) {
   wnout.sort((a, b) => pro.indexOf(a) - pro.indexOf(b)); 
   return wnout.concat(wis);
 }
+1

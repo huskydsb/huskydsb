@@ -378,7 +378,7 @@ function oneP(e) {
   // 处理只有一个节点的情况
   for (const key in t) {
     if (t[key].length === 1) {
-      // 如果只有一个节点，则去掉上标数字
+      // 如果只有一个节点，去掉上标数字
       t[key][0].name = key; // 只保留 baseName
     } else {
       // 如果有多个节点，保留原来的 name
@@ -388,8 +388,14 @@ function oneP(e) {
     }
   }
 
+  // 最后去除所有上标数字（如果需要）
+  e.forEach(item => {
+    item.name = item.name.replace(/ [⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, ""); // 确保不再有上标数字
+  });
+
   return e;
 }
+
 
 
 

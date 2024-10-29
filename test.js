@@ -364,7 +364,6 @@ function jxh(e) {
   return e;
 }
 
-// 修改 oneP 函数，使其在节点只有一个时去掉序号
 function oneP(e) {
   const t = e.reduce((acc, curr) => {
     // 删除上标数字检测
@@ -378,19 +377,22 @@ function oneP(e) {
 
   // 处理只有一个序号的情况
   for (const key in t) {
-    if (t[key].length === 1 && t[key][0].name.endsWith(" 01")) {
+    if (t[key].length === 1) {
       // 如果只有一个节点且是 "01"，则删除
-      t[key][0].name = key;
-    } else if (t[key].length > 1) {
-      // 如果有多个，保留
-      t[key].forEach((item, index) => {
-        item.name = `${item.name}`;
+      if (t[key][0].name.endsWith(" 01")) {
+        t[key][0].name = key; // 设置为 baseName
+      }
+    } else {
+      // 如果有多个节点，保留原来的 name，但不包括数字
+      t[key].forEach(item => {
+        item.name = item.name.replace(/ \d{2}$/, ""); // 删除最后的数字
       });
     }
   }
 
   return e;
 }
+
 
 
 // prettier-ignore
